@@ -1,0 +1,81 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-08T09:27:53.291Z",
+  "summary": "Diff adds a full React frontend flow (planner form, discovery, recommendations, exports, past schedules drawer, bilingual toggle) and a Motoko backend actor with schedule/profile/quick-buy storage and authorization. However, the map implementation does not appear to meet the requested interactive map behavior, and several unrequested authorization/profile/admin-token mechanisms were introduced.",
+  "missing_requirements": [
+    {
+      "id": "REQ-10",
+      "requirement": "Add a map visualization that plots the user location and discovered shops, and allows selecting a shop from the map to view details using a React-compatible map library.",
+      "reason": "The added MapView renders an OpenStreetMap embed iframe and a separate list of shop cards, but does not plot per-shop markers on the map nor support selecting a shop by clicking a map marker. It also does not appear to use a React map library (it uses an iframe embed).",
+      "evidence": [
+        "frontend/src/components/MapView.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Role-based access control / admin initialization via secret token parameter (caffeineAdminToken) and authorization mixins.",
+      "reason": "BuildRequest only specifies persistence in a single Motoko actor and (if needed) Internet Identity; it does not request role-based authorization layers or admin secret token bootstrapping via URL parameters.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useActor.ts"
+      ]
+    },
+    {
+      "description": "User profile management (name, preferredLocation, defaultBudget) and a forced profile setup dialog after login.",
+      "reason": "BuildRequest focuses on shopping schedule planning, discovery, exports, and bilingual UI; it does not request user profile creation/setup flows.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/components/ProfileSetupDialog.tsx",
+        "frontend/src/App.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.74,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/README.md",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AppHeader.tsx",
+    "frontend/src/components/CategoryMappingEditor.tsx",
+    "frontend/src/components/CostSummary.tsx",
+    "frontend/src/components/DemoModeToggle.tsx",
+    "frontend/src/components/DiscoveryPanel.tsx",
+    "frontend/src/components/EmptyState.tsx",
+    "frontend/src/components/ExportPanel.tsx",
+    "frontend/src/components/ItemsEditor.tsx",
+    "frontend/src/components/LanguageToggle.tsx",
+    "frontend/src/components/MapView.tsx",
+    "frontend/src/components/PastSchedulesDrawer.tsx",
+    "frontend/src/components/PlannerForm.tsx",
+    "frontend/src/components/PriceComparison.tsx",
+    "frontend/src/components/ProfileSetupDialog.tsx",
+    "frontend/src/components/QuickBuyList.tsx",
+    "frontend/src/components/RecommendationsPanel.tsx",
+    "frontend/src/components/ShopsList.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useGeolocation.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useSpeechToText.ts",
+    "frontend/src/index.css",
+    "frontend/src/lib/categories.ts",
+    "frontend/src/lib/costing.ts",
+    "frontend/src/lib/demoData.ts",
+    "frontend/src/lib/exports/ics.ts",
+    "frontend/src/lib/exports/pdf.ts",
+    "frontend/src/lib/geo.ts",
+    "frontend/src/lib/i18n.tsx",
+    "frontend/src/lib/providers/placesProviders.ts",
+    "frontend/src/lib/scheduling.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

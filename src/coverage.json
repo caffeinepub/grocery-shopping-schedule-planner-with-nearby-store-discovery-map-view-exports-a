@@ -1,0 +1,372 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-08T09:27:53.295Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 14,
+    "implemented": 13,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Create a mobile-responsive app flow that collects: location (manual city/pincode + optional browser geolocation), preferred shopping date/time, budget, and a list of items via a simple form; also support optional voice-to-text entry for items using the browser Web Speech API when available.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/PlannerForm.tsx",
+          "frontend/src/components/ItemsEditor.tsx",
+          "frontend/src/hooks/useGeolocation.ts",
+          "frontend/src/hooks/useSpeechToText.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/PlannerForm.tsx",
+          "frontend/src/components/ItemsEditor.tsx",
+          "frontend/src/hooks/useGeolocation.ts",
+          "frontend/src/hooks/useSpeechToText.ts"
+        ]
+      },
+      {
+        "id": "REQ-10",
+        "summary": "Add a map visualization that plots the user location and discovered shops, and allows selecting a shop from the map to view details. Use a frontend map library compatible with React (no server-side rendering).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/MapView.tsx",
+          "frontend/src/components/DiscoveryPanel.tsx",
+          "frontend/package.json",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/MapView.tsx",
+          "frontend/src/components/DiscoveryPanel.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-11",
+        "summary": "Implement robust error handling and empty states: if no nearby shops are found or API calls fail, show a clear message and suggest alternatives (e.g., consider delivery apps) while still allowing schedule creation using the demo dataset.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/EmptyState.tsx",
+          "frontend/src/components/DiscoveryPanel.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/EmptyState.tsx",
+          "frontend/src/components/DiscoveryPanel.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Add an Indore, India demo mode with sample shops and sample items so the app can be demonstrated without any external API keys. Include at least one “D-Mart” example and a couple of local stores with plausible addresses and opening hours.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/DemoModeToggle.tsx",
+          "frontend/src/lib/demoData.ts",
+          "frontend/src/components/DiscoveryPanel.tsx",
+          "frontend/src/components/PlannerForm.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/DemoModeToggle.tsx",
+          "frontend/src/lib/demoData.ts",
+          "frontend/src/components/DiscoveryPanel.tsx",
+          "frontend/src/components/PlannerForm.tsx"
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "summary": "Provide a coherent visual theme and apply it consistently across the app (colors, typography, spacing, and component styling). Choose a warm, India-inspired palette (avoid blue/purple) and a clean, utility-first layout optimized for quick one-handed mobile use.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/App.tsx",
+          "frontend/src/components/AppHeader.tsx",
+          "frontend/public/assets/generated/logo-shopping-schedule.dim_512x512.png",
+          "frontend/public/assets/generated/hero-grocery-run.dim_1600x600.png",
+          "frontend/public/assets/generated/map-pins-set.dim_256x256.png"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/App.tsx",
+          "frontend/src/components/AppHeader.tsx",
+          "frontend/public/assets/generated/logo-shopping-schedule.dim_512x512.png",
+          "frontend/public/assets/generated/hero-grocery-run.dim_1600x600.png",
+          "frontend/public/assets/generated/map-pins-set.dim_256x256.png"
+        ]
+      },
+      {
+        "id": "REQ-14",
+        "summary": "Add setup and deployment documentation for the Internet Computer project (local dev and mainnet), including any required external API keys (optional), where to configure them, and how to run the demo mode without keys.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/README.md",
+          "frontend/src/components/DiscoveryPanel.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/README.md",
+          "frontend/src/components/DiscoveryPanel.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Implement nearby shop discovery using an external places data source with a configurable provider option (e.g., OpenStreetMap Nominatim/Overpass by default, and optionally Google Places if the user provides an API key in-app). Search for grocery stores/supermarkets/kirana-type places near the user location and return for each result: shop name, exact address, distance in km, current opening status (open now / closed / unknown), phone number if available, and estimated travel time.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/providers/placesProviders.ts",
+          "frontend/src/lib/geo.ts",
+          "frontend/src/components/DiscoveryPanel.tsx",
+          "frontend/src/components/ShopsList.tsx",
+          "frontend/src/lib/demoData.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/providers/placesProviders.ts",
+          "frontend/src/lib/geo.ts",
+          "frontend/src/components/DiscoveryPanel.tsx",
+          "frontend/src/components/ShopsList.tsx",
+          "frontend/src/lib/demoData.ts"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Add item-to-category matching so the shop discovery can prioritize relevant shop types/categories (e.g., groceries vs goodies/snacks) based on the user’s item list. Provide a simple, editable mapping in the UI (defaults included).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/categories.ts",
+          "frontend/src/components/CategoryMappingEditor.tsx",
+          "frontend/src/components/DiscoveryPanel.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/categories.ts",
+          "frontend/src/components/CategoryMappingEditor.tsx",
+          "frontend/src/components/DiscoveryPanel.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Generate a smart shopping schedule recommending the top 3 nearest suitable shops, including an optimal visit time slot for each recommendation based on the user’s preferred date/time and each shop’s opening hours (when available).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/scheduling.ts",
+          "frontend/src/components/RecommendationsPanel.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/scheduling.ts",
+          "frontend/src/components/RecommendationsPanel.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Provide shareable schedule exports: (1) a downloadable calendar event (.ics) and (2) a downloadable PDF. Exports must include: item list, selected shop details, estimated total cost, and reminders/notes.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/exports/ics.ts",
+          "frontend/src/lib/exports/pdf.ts",
+          "frontend/src/components/ExportPanel.tsx",
+          "frontend/package.json"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/exports/ics.ts",
+          "frontend/src/lib/exports/pdf.ts",
+          "frontend/src/components/ExportPanel.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Implement cost estimation and affordability helpers: maintain a built-in average price table for common items (India-focused defaults) and compute an estimated total; show whether the plan is within the user’s budget and highlight the highest-cost items.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/costing.ts",
+          "frontend/src/components/CostSummary.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/costing.ts",
+          "frontend/src/components/CostSummary.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-7",
+        "summary": "Add shopping helper features: (a) a “Quick buy list” of common goodies/snacks (user can add to items with one tap), (b) price comparison across the discovered shops when shop-specific price data is unavailable (use a simple heuristic: same base item prices with configurable per-shop multiplier), and (c) reorder from past schedules.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/QuickBuyList.tsx",
+          "frontend/src/components/PriceComparison.tsx",
+          "frontend/src/components/PastSchedulesDrawer.tsx",
+          "frontend/src/hooks/useSchedules.ts",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/QuickBuyList.tsx",
+          "frontend/src/components/PriceComparison.tsx",
+          "frontend/src/components/PastSchedulesDrawer.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Persist user schedules in the Internet Computer backend (Motoko) so schedules can be saved, listed, viewed, and deleted. Store at minimum: createdAt, location input, preferred date/time, budget, items (with optional price overrides), selected shop snapshot, computed estimates, and export metadata.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-9",
+        "summary": "Add a bilingual UI toggle (English/Hindi) for the main user-facing UI strings, defaulting to English. The toggle must not require a page reload and should persist the user preference locally.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/i18n.tsx",
+          "frontend/src/components/LanguageToggle.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/i18n.tsx",
+          "frontend/src/components/LanguageToggle.tsx",
+          "frontend/src/App.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/authorization/MixinAuthorization.mo",
+    "backend/authorization/access-control.mo",
+    "backend/main.mo",
+    "build-request.json",
+    "build-template/Dockerfile",
+    "build-template/LICENSE",
+    "build-template/README.md",
+    "build-template/deploy.sh",
+    "build-template/icp.yaml",
+    "build-template/package.json",
+    "build-template/pnpm-lock.yaml",
+    "build-template/pnpm-workspace.yaml",
+    "build-template/scripts/prune-unused-images.js",
+    "build-template/scripts/resize-images.js",
+    "build-template/src/backend/canister.yaml",
+    "build-template/src/backend/system-idl/aaaaa-aa.did",
+    "build-template/src/frontend/canister.yaml",
+    "build-template/src/frontend/components.json",
+    "build-template/src/frontend/env.json",
+    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
+    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
+    "build-template/src/frontend/eslint.config.js",
+    "build-template/src/frontend/package.json",
+    "build-template/src/frontend/postcss.config.js",
+    "build-template/src/frontend/src/components/ui/accordion.tsx",
+    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
+    "build-template/src/frontend/src/components/ui/alert.tsx",
+    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
+    "build-template/src/frontend/src/components/ui/avatar.tsx",
+    "build-template/src/frontend/src/components/ui/badge.tsx",
+    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
+    "build-template/src/frontend/src/components/ui/button.tsx",
+    "build-template/src/frontend/src/components/ui/calendar.tsx",
+    "build-template/src/frontend/src/components/ui/card.tsx",
+    "build-template/src/frontend/src/components/ui/carousel.tsx",
+    "build-template/src/frontend/src/components/ui/chart.tsx",
+    "build-template/src/frontend/src/components/ui/checkbox.tsx",
+    "build-template/src/frontend/src/components/ui/collapsible.tsx",
+    "build-template/src/frontend/src/components/ui/command.tsx",
+    "build-template/src/frontend/src/components/ui/context-menu.tsx",
+    "build-template/src/frontend/src/components/ui/dialog.tsx",
+    "build-template/src/frontend/src/components/ui/drawer.tsx",
+    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
+    "build-template/src/frontend/src/components/ui/form.tsx",
+    "build-template/src/frontend/src/components/ui/hover-card.tsx",
+    "build-template/src/frontend/src/components/ui/input-otp.tsx",
+    "build-template/src/frontend/src/components/ui/input.tsx",
+    "build-template/src/frontend/src/components/ui/label.tsx",
+    "build-template/src/frontend/src/components/ui/menubar.tsx",
+    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
+    "build-template/src/frontend/src/components/ui/pagination.tsx",
+    "build-template/src/frontend/src/components/ui/popover.tsx",
+    "build-template/src/frontend/src/components/ui/progress.tsx",
+    "build-template/src/frontend/src/components/ui/radio-group.tsx",
+    "build-template/src/frontend/src/components/ui/resizable.tsx",
+    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
+    "build-template/src/frontend/src/components/ui/select.tsx",
+    "build-template/src/frontend/src/components/ui/separator.tsx",
+    "build-template/src/frontend/src/components/ui/sheet.tsx",
+    "build-template/src/frontend/src/components/ui/sidebar.tsx",
+    "build-template/src/frontend/src/components/ui/skeleton.tsx",
+    "build-template/src/frontend/src/components/ui/slider.tsx",
+    "build-template/src/frontend/src/components/ui/sonner.tsx",
+    "build-template/src/frontend/src/components/ui/switch.tsx",
+    "build-template/src/frontend/src/components/ui/table.tsx",
+    "build-template/src/frontend/src/components/ui/tabs.tsx",
+    "build-template/src/frontend/src/components/ui/textarea.tsx",
+    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
+    "build-template/src/frontend/src/components/ui/toggle.tsx",
+    "build-template/src/frontend/src/components/ui/tooltip.tsx",
+    "build-template/src/frontend/src/hooks/use-mobile.tsx",
+    "build-template/src/frontend/src/lib/utils.ts",
+    "build-template/src/frontend/tsconfig.json",
+    "build-template/src/frontend/vite.config.js",
+    "build-template/tsconfig.json",
+    "caffeine.lock.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/README.md",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/public/assets/generated/hero-grocery-run.dim_1600x600.png",
+    "frontend/public/assets/generated/logo-shopping-schedule.dim_512x512.png",
+    "frontend/public/assets/generated/map-pins-set.dim_256x256.png",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/AppHeader.tsx",
+    "frontend/src/components/CategoryMappingEditor.tsx",
+    "frontend/src/components/CostSummary.tsx",
+    "frontend/src/components/DemoModeToggle.tsx",
+    "frontend/src/components/DiscoveryPanel.tsx",
+    "frontend/src/components/EmptyState.tsx",
+    "frontend/src/components/ExportPanel.tsx",
+    "frontend/src/components/ItemsEditor.tsx",
+    "frontend/src/components/LanguageToggle.tsx",
+    "frontend/src/components/MapView.tsx",
+    "frontend/src/components/PastSchedulesDrawer.tsx",
+    "frontend/src/components/PlannerForm.tsx",
+    "frontend/src/components/PriceComparison.tsx",
+    "frontend/src/components/ProfileSetupDialog.tsx",
+    "frontend/src/components/QuickBuyList.tsx",
+    "frontend/src/components/RecommendationsPanel.tsx",
+    "frontend/src/components/ShopsList.tsx",
+    "frontend/src/config.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useGeolocation.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useSpeechToText.ts",
+    "frontend/src/index.css",
+    "frontend/src/lib/categories.ts",
+    "frontend/src/lib/costing.ts",
+    "frontend/src/lib/demoData.ts",
+    "frontend/src/lib/exports/ics.ts",
+    "frontend/src/lib/exports/pdf.ts",
+    "frontend/src/lib/geo.ts",
+    "frontend/src/lib/i18n.tsx",
+    "frontend/src/lib/providers/placesProviders.ts",
+    "frontend/src/lib/scheduling.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/ui-summary.json",
+    "frontend/src/utils/StorageClient.ts",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

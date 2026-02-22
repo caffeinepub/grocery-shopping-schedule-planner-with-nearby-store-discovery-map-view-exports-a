@@ -1,0 +1,5 @@
+{
+  "frontend/src/components/MapView.tsx": "Map visualization component that displays shops on an embedded OpenStreetMap iframe with a grid of clickable shop cards below, avoiding external map library dependencies.",
+  "frontend/src/lib/i18n.tsx": "Lightweight internationalization system providing English/Hindi translations with React context, local storage persistence, and parameter interpolation support.",
+  "frontend/src/index.css": "Global styles with warm India-inspired OKLCH color palette featuring saffron/amber accents for both light and dark modes."
+}

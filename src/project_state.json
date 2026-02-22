@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Full-stack Python web app (Streamlit or Flask) that creates a personalized grocery shopping schedule: collect user inputs (location/date-time/budget/items/voice), discover nearby open/high-rated relevant shops via Places/OSM/Foursquare APIs, generate an optimal top-3 shop schedule, provide shareable outputs (calendar/PDF) with cost estimates/reminders, include quick-buy lists, price comparison, reordering, bilingual Hindi/English UI, mobile-responsive UI, map visualization, persistence in SQLite, error handling, and deployment guidance with an Indore demo dataset.",
+  "architectural_notes": [
+    "Use Python with Streamlit (preferred for quick deploy) or Flask as alternative full-stack option.",
+    "Integrate external places/location provider (Google Places API / OpenStreetMap / Foursquare) for shop search and hours/ratings.",
+    "Use SQLite for persistence of schedules and history (for reordering).",
+    "Use Folium or Google Maps for interactive map visualization.",
+    "Provide export formats: calendar event (ICS) and/or PDF."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- App logo mark: simple grocery bag + clock icon, flat style, warm palette (logo-shopping-schedule.dim_512x512.png)\n- Illustrated hero/banner: busy Indian city grocery run theme, minimal flat illustration, warm palette (hero-grocery-run.dim_1600x600.png)\n- Map pin icon set: user pin and shop pin, flat style, high contrast (map-pins-set.dim_256x256.png)",
+  "existing_features": [
+    {
+      "id": "feature-create-a-mobile-responsive-app-flow-that-collects-location-manual-city-pincode-optional-browser-geolocation-preferred-shopping-date-time-budget-and-a-list-of-items-via-a-simple-form-also-support-optional-voice-to-text-entry-for-items-using-the-browser-web-speech-api-when-available",
+      "title": "Create a mobile-responsive app flow that collects: location (manual city/pincode + optional browser geolocation), preferred shopping date/time, budget, and a list of items via a simple form; also support optional voice-to-text entry for items using the browser Web Speech API when available.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-nearby-shop-discovery-using-an-external-places-data-source-with-a-configurable-provider-option-e-g-openstreetmap-nominatim-overpass-by-default-and-optionally-google-places-if-the-user-provides-an-api-key-in-app-search-for-grocery-stores-supermarkets-kirana-type-places-near-the-user-location-and-return-for-each-result-shop-name-exact-address-distance-in-km-current-opening-status-open-now-closed-unknown-phone-number-if-available-and-estimated-travel-time",
+      "title": "Implement nearby shop discovery using an external places data source with a configurable provider option (e.g., OpenStreetMap Nominatim/Overpass by default, and optionally Google Places if the user provides an API key in-app). Search for grocery stores/supermarkets/kirana-type places near the user location and return for each result: shop name, exact address, distance in km, current opening status (open now / closed / unknown), phone number if available, and estimated travel time.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-item-to-category-matching-so-the-shop-discovery-can-prioritize-relevant-shop-types-categories-e-g-groceries-vs-goodies-snacks-based-on-the-user-s-item-list-provide-a-simple-editable-mapping-in-the-ui-defaults-included",
+      "title": "Add item-to-category matching so the shop discovery can prioritize relevant shop types/categories (e.g., groceries vs goodies/snacks) based on the user’s item list. Provide a simple, editable mapping in the UI (defaults included).",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-a-smart-shopping-schedule-recommending-the-top-3-nearest-suitable-shops-including-an-optimal-visit-time-slot-for-each-recommendation-based-on-the-user-s-preferred-date-time-and-each-shop-s-opening-hours-when-available",
+      "title": "Generate a smart shopping schedule recommending the top 3 nearest suitable shops, including an optimal visit time slot for each recommendation based on the user’s preferred date/time and each shop’s opening hours (when available).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-provide-shareable-schedule-exports-1-a-downloadable-calendar-event-ics-and-2-a-downloadable-pdf-exports-must-include-item-list-selected-shop-details-estimated-total-cost-and-reminders-notes",
+      "title": "Provide shareable schedule exports: (1) a downloadable calendar event (.ics) and (2) a downloadable PDF. Exports must include: item list, selected shop details, estimated total cost, and reminders/notes.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-cost-estimation-and-affordability-helpers-maintain-a-built-in-average-price-table-for-common-items-india-focused-defaults-and-compute-an-estimated-total-show-whether-the-plan-is-within-the-user-s-budget-and-highlight-the-highest-cost-items",
+      "title": "Implement cost estimation and affordability helpers: maintain a built-in average price table for common items (India-focused defaults) and compute an estimated total; show whether the plan is within the user’s budget and highlight the highest-cost items.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-shopping-helper-features-a-a-quick-buy-list-of-common-goodies-snacks-user-can-add-to-items-with-one-tap-b-price-comparison-across-the-discovered-shops-when-shop-specific-price-data-is-unavailable-use-a-simple-heuristic-same-base-item-prices-with-configurable-per-shop-multiplier-and-c-reorder-from-past-schedules",
+      "title": "Add shopping helper features: (a) a “Quick buy list” of common goodies/snacks (user can add to items with one tap), (b) price comparison across the discovered shops when shop-specific price data is unavailable (use a simple heuristic: same base item prices with configurable per-shop multiplier), and (c) reorder from past schedules.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-bilingual-ui-toggle-english-hindi-for-the-main-user-facing-ui-strings-defaulting-to-english-the-toggle-must-not-require-a-page-reload-and-should-persist-the-user-preference-locally",
+      "title": "Add a bilingual UI toggle (English/Hindi) for the main user-facing UI strings, defaulting to English. The toggle must not require a page reload and should persist the user preference locally.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-map-visualization-that-plots-the-user-location-and-discovered-shops-and-allows-selecting-a-shop-from-the-map-to-view-details-use-a-frontend-map-library-compatible-with-react-no-server-side-rendering",
+      "title": "Add a map visualization that plots the user location and discovered shops, and allows selecting a shop from the map to view details. Use a frontend map library compatible with React (no server-side rendering).",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-robust-error-handling-and-empty-states-if-no-nearby-shops-are-found-or-api-calls-fail-show-a-clear-message-and-suggest-alternatives-e-g-consider-delivery-apps-while-still-allowing-schedule-creation-using-the-demo-dataset",
+      "title": "Implement robust error handling and empty states: if no nearby shops are found or API calls fail, show a clear message and suggest alternatives (e.g., consider delivery apps) while still allowing schedule creation using the demo dataset.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-indore-india-demo-mode-with-sample-shops-and-sample-items-so-the-app-can-be-demonstrated-without-any-external-api-keys-include-at-least-one-d-mart-example-and-a-couple-of-local-stores-with-plausible-addresses-and-opening-hours",
+      "title": "Add an Indore, India demo mode with sample shops and sample items so the app can be demonstrated without any external API keys. Include at least one “D-Mart” example and a couple of local stores with plausible addresses and opening hours.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-provide-a-coherent-visual-theme-and-apply-it-consistently-across-the-app-colors-typography-spacing-and-component-styling-choose-a-warm-india-inspired-palette-avoid-blue-purple-and-a-clean-utility-first-layout-optimized-for-quick-one-handed-mobile-use",
+      "title": "Provide a coherent visual theme and apply it consistently across the app (colors, typography, spacing, and component styling). Choose a warm, India-inspired palette (avoid blue/purple) and a clean, utility-first layout optimized for quick one-handed mobile use.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-setup-and-deployment-documentation-for-the-internet-computer-project-local-dev-and-mainnet-including-any-required-external-api-keys-optional-where-to-configure-them-and-how-to-run-the-demo-mode-without-keys",
+      "title": "Add setup and deployment documentation for the Internet Computer project (local dev and mainnet), including any required external API keys (optional), where to configure them, and how to run the demo mode without keys.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "User input flow: capture location (geolocation or city/pincode), preferred shopping date/time, budget, and item list via form; optional voice input",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Nearby shop discovery via external location API (Google Places / OpenStreetMap / Foursquare) with filtering by open-now, rating >=4, and item category match; return name/address/distance/open status/phone/ETA",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Schedule generation: recommend top 3 nearest suitable shops and create an optimized shopping time slot plan",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Shareable schedule export: generate calendar event and/or PDF including item list, shop details, estimated total cost, and reminders",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Shopping helpers: quick-buy list for common goodies, price comparison across shops, and reorder from past schedules",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "UI/UX requirements: mobile-responsive interface with Hindi/English toggle and India-focused affordability/convenience",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Map visualization of shop locations using Folium or Google Maps integration",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Data persistence: store user schedules in SQLite; include error handling when no nearby shops are found (suggest delivery alternatives)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Delivery/output packaging: provide runnable code, setup instructions (pip installs, API keys), deployment steps (Streamlit Cloud/Heroku), and Indore sample demo data (e.g., D-Mart/local stores)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Persist user schedules in the Internet Computer backend (Motoko) so schedules can be saved, listed, viewed, and deleted. Store at minimum: createdAt, location input, preferred date/time, budget, items (with optional price overrides), selected shop snapshot, computed estimates, and export metadata.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Grocery Shopping Schedule Planner with Nearby Store Discovery, Map View, Exports, and Bilingual UI",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

@@ -1,0 +1,407 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Grocery shopping schedule planner (mobile-first) with discovery, map, exports, helpers, demo mode, and bilingual UI",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Build a mobile-first planner form for location, date/time, budget, and item list with optional geolocation and voice-to-text item entry.",
+      "acceptanceCriteria": [
+        "User can enter city/pincode and/or click a button to use browser geolocation (with permission) to set location.",
+        "User can add/edit/remove items in a list; voice input can append recognized text into the items list when supported; graceful fallback when not supported.",
+        "Form validation prevents empty required fields (location, date/time, at least 1 item) and shows clear inline errors.",
+        "Layout works well on mobile widths (no horizontal scrolling; key actions accessible)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Create the main app shell for the single-page planner flow (mobile-first layout), including login gating using the selected authorization + Internet Identity hooks (require login before accessing user data). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/PlannerForm.tsx",
+          "operation": "create",
+          "description": "Implement the planner form UI: manual location input, geolocation button, preferred date/time picker, budget input, and item list editor with inline validation errors. Add Web Speech API-based voice-to-text item append when supported, with a clear fallback message when unsupported/permission denied."
+        },
+        {
+          "path": "frontend/src/components/ItemsEditor.tsx",
+          "operation": "create",
+          "description": "Create an items list editor with add/edit/remove, keyboard-friendly interactions, and a single-tap add action for mobile (used by the main form and quick-buy)."
+        },
+        {
+          "path": "frontend/src/hooks/useGeolocation.ts",
+          "operation": "create",
+          "description": "Add a small hook to request browser geolocation, return status/errors, and normalize into latitude/longitude and/or a user-friendly label to populate the form."
+        },
+        {
+          "path": "frontend/src/hooks/useSpeechToText.ts",
+          "operation": "create",
+          "description": "Add a hook wrapping the browser Web Speech API for voice-to-text item capture; expose capability detection, start/stop, and recognized text events with graceful fallbacks."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Implement nearby shop discovery with provider selection (OSM default, optional Google Places key), required result fields, filtering, and demo fallback.",
+      "acceptanceCriteria": [
+        "User can run a “Find nearby shops” action after providing location + items.",
+        "App displays a results list with the required fields (name, address, distance, opening status, phone if present, ETA).",
+        "Filtering is applied when the provider returns the data: prioritize open-now first; enforce rating >= 4 when ratings are available; otherwise label rating as unavailable and do not break the flow.",
+        "If the external API fails or is blocked, the app falls back to a built-in demo dataset for Indore, India (including examples like D-Mart and local stores) so the feature remains testable."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/providers/placesProviders.ts",
+          "operation": "create",
+          "description": "Implement provider adapters for nearby shop search: OSM (default) and optional Google Places when a user-provided API key is present. Normalize to a common ShopResult model including name, address, distanceKm, openingStatus, phone (optional), etaMinutes (estimated), and rating (optional). Handle provider errors/timeouts and support falling back to demo data."
+        },
+        {
+          "path": "frontend/src/lib/geo.ts",
+          "operation": "create",
+          "description": "Add frontend utilities for distance calculation and simple ETA estimation (e.g., walking/driving heuristic) used to compute distance/ETA when the provider does not supply them."
+        },
+        {
+          "path": "frontend/src/components/DiscoveryPanel.tsx",
+          "operation": "create",
+          "description": "Add UI for provider selection, optional in-app API key entry (stored locally), and a “Find nearby shops” action. Render results list with required fields and filtering logic (open-now first; rating>=4 when available; otherwise show rating as unavailable)."
+        },
+        {
+          "path": "frontend/src/components/ShopsList.tsx",
+          "operation": "create",
+          "description": "Render the discovery results list and allow selecting a shop for schedule creation/export; include required fields and clear labels for unknown/missing data."
+        },
+        {
+          "path": "frontend/src/lib/demoData.ts",
+          "operation": "create",
+          "description": "Add built-in Indore demo dataset for shops (including at least one “D-Mart” and multiple local stores) with plausible addresses, coordinates, and opening hours, plus a small sample items list used by demo mode fallback."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add item-to-category matching with editable mapping and use categories to bias discovery when supported.",
+      "acceptanceCriteria": [
+        "App computes categories from the item list using a default mapping and shows the inferred categories to the user.",
+        "User can adjust categories (e.g., mark an item as “goodies/snacks”) and rerun discovery.",
+        "Discovery query/filters use the category info to bias or filter results where supported by the provider; otherwise show a label indicating category filtering is limited by provider data."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/categories.ts",
+          "operation": "create",
+          "description": "Implement default item-to-category mapping, inference from the current items list, and serialization/deserialization for local persistence of user-edited mappings."
+        },
+        {
+          "path": "frontend/src/components/CategoryMappingEditor.tsx",
+          "operation": "create",
+          "description": "Provide UI to display inferred categories and edit per-item category assignments/mapping; persist user edits locally and expose category signals to discovery."
+        },
+        {
+          "path": "frontend/src/components/DiscoveryPanel.tsx",
+          "operation": "modify",
+          "description": "Wire inferred/edited category signals into the discovery request/biasing for providers that support it; otherwise show a visible label that category filtering is limited by provider data."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Generate a smart shopping schedule recommending top 3 suitable shops with suggested visit times and allow choosing one for save/export.",
+      "acceptanceCriteria": [
+        "App selects and displays “Top 3” recommendations using a clear ranking (open-now first, then distance; incorporate rating when available).",
+        "Each recommendation includes a suggested visit time (based on preferred date/time + shop open hours when available; otherwise mark hours as unknown and keep the preferred time).",
+        "User can choose one of the recommended schedules to save/export."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/scheduling.ts",
+          "operation": "create",
+          "description": "Implement ranking and top-3 selection (open-now first, then distance, incorporate rating when available) plus visit time suggestion logic using preferred date/time and shop opening hours when present; return explanation labels for unknown hours."
+        },
+        {
+          "path": "frontend/src/components/RecommendationsPanel.tsx",
+          "operation": "create",
+          "description": "Display top 3 recommendations with rank rationale, suggested visit time slot, and actions to choose one as the selected schedule shop for export/reorder flows."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire discovery results and form state into the recommendations panel and selected-shop state so a user can choose a recommendation for downstream export."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Provide downloadable schedule exports as .ics calendar event and PDF including items, selected shop details, estimated cost, and editable notes.",
+      "acceptanceCriteria": [
+        "User can download an .ics file that imports into calendar apps with the correct date/time and location text.",
+        "User can download a PDF summarizing the schedule and items (readable on mobile).",
+        "Exports include estimated total cost and a reminders/notes section (editable by the user before export)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/exports/ics.ts",
+          "operation": "create",
+          "description": "Implement .ics text generation for the selected schedule (preferred date/time, location text, shop details, items, cost summary, notes) and a browser download helper."
+        },
+        {
+          "path": "frontend/src/lib/exports/pdf.ts",
+          "operation": "create",
+          "description": "Implement PDF generation and download for the selected schedule (mobile-readable layout) including items, shop snapshot, estimated cost, and notes/reminders. (May require adding a PDF library dependency.)"
+        },
+        {
+          "path": "frontend/src/components/ExportPanel.tsx",
+          "operation": "create",
+          "description": "Create UI to edit reminders/notes prior to export and buttons to download .ics and PDF; include selected shop details and item list summary."
+        },
+        {
+          "path": "frontend/package.json",
+          "operation": "modify",
+          "description": "Add any required frontend dependencies for PDF generation and map rendering used by exports and other features (ensure they are compatible with client-side React and the current build template)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Add cost estimation with India-focused average prices, budget comparison, and per-item price overrides; highlight highest-cost items.",
+      "acceptanceCriteria": [
+        "Estimated total cost is shown before saving/exporting and updates when items change.",
+        "UI clearly indicates within-budget vs over-budget and shows the delta.",
+        "User can edit per-item assumed prices for their schedule (overrides default)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/costing.ts",
+          "operation": "create",
+          "description": "Implement built-in average price table (India-focused defaults), total estimation, budget delta computation, highest-cost item detection, and per-item override handling."
+        },
+        {
+          "path": "frontend/src/components/CostSummary.tsx",
+          "operation": "create",
+          "description": "Render estimated total, within/over budget indicator with delta, and a list/label for highest-cost items; allow editing per-item assumed prices (overrides default) and keep estimates reactive."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire cost estimation into the main planner state so totals update as items/prices/budget change and are included in export-ready schedule data."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Add quick-buy list, heuristic price comparison across discovered shops, and reorder from past schedules.",
+      "acceptanceCriteria": [
+        "Quick buy list is visible and adds selected items into the current list.",
+        "Price comparison view shows estimated totals per shop for the same basket and highlights the cheapest option (with a disclaimer that it’s estimated).",
+        "User can select a past schedule and clone it into a new schedule (items + prices + notes), then re-run shop discovery."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/QuickBuyList.tsx",
+          "operation": "create",
+          "description": "Implement a quick-buy list UI (goodies/snacks) with one-tap add into the current items list. Integrate with backend getQuickBuyList when available and fall back to demo defaults if needed. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/PriceComparison.tsx",
+          "operation": "create",
+          "description": "Implement price comparison across discovered shops using a heuristic (base item prices + per-shop multiplier) when shop-specific price data is unavailable; highlight cheapest option and show an estimation disclaimer."
+        },
+        {
+          "path": "frontend/src/components/PastSchedulesDrawer.tsx",
+          "operation": "create",
+          "description": "Implement UI to list past schedules (via backend listSchedules) and clone a selected schedule into the current planner state (items + price overrides + notes), then prompt the user to re-run discovery."
+        },
+        {
+          "path": "frontend/src/hooks/useSchedules.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for listing schedules and retrieving a single schedule for reorder/clone flows; handle auth errors and loading/empty states gracefully. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire QuickBuyList, PriceComparison, and PastSchedulesDrawer into the planner flow so they are reachable (no orphan UI) and interact with the shared planner state."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Add an English/Hindi toggle with instant UI updates and locally persisted preference with fallback to English.",
+      "acceptanceCriteria": [
+        "User can toggle English/Hindi and see UI labels update immediately.",
+        "Language preference persists across reloads in the browser.",
+        "If any string is missing a translation, it falls back to English."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/i18n.tsx",
+          "operation": "create",
+          "description": "Implement a lightweight i18n system (English/Hindi) with a translation dictionary, fallback-to-English behavior, React context/provider, and local persistence of language preference."
+        },
+        {
+          "path": "frontend/src/components/LanguageToggle.tsx",
+          "operation": "create",
+          "description": "Create a compact language toggle control (English/Hindi) that updates UI immediately and persists preference locally."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wrap the app with the i18n provider and place the LanguageToggle in the main app header so it is accessible without page reload."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Add a React-compatible map view plotting user location and discovered shops with marker selection details and no-results handling.",
+      "acceptanceCriteria": [
+        "Map renders markers for discovered shops and an indicator for the user location (when available).",
+        "Clicking a marker opens a details panel/card with the same fields shown in the list.",
+        "Map gracefully handles the “no results” case (shows message and no markers)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/MapView.tsx",
+          "operation": "create",
+          "description": "Implement a client-side-only map view using a React-compatible map library (e.g., react-leaflet) to show user location and shop markers; clicking a marker selects the shop and opens a details panel consistent with the list view. (May require adding map dependencies.)"
+        },
+        {
+          "path": "frontend/src/components/DiscoveryPanel.tsx",
+          "operation": "modify",
+          "description": "Wire map view toggle/section into discovery results and ensure selecting a shop in list or map stays in sync."
+        },
+        {
+          "path": "frontend/package.json",
+          "operation": "modify",
+          "description": "Add required frontend dependencies for the chosen React map library and any required CSS assets, ensuring no SSR assumptions and compatibility with the current build toolchain."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Ensure the map visualization is reachable from the main flow after discovery and that the “no results” state renders a clear message with an empty map state."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Add robust error handling and empty states for discovery and scheduling flows, keeping demo/manual selection usable.",
+      "acceptanceCriteria": [
+        "When there are no results, UI presents an actionable empty state (edit location, broaden search, use demo mode) and suggests delivery alternatives in generic terms.",
+        "Errors are displayed in a user-friendly manner; technical details are logged to console only.",
+        "User can still proceed to create/export a schedule using manually selected/demo shops."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/EmptyState.tsx",
+          "operation": "create",
+          "description": "Create a reusable empty/error state component with actionable suggestions (edit location, broaden search, enable demo mode) and generic delivery alternatives text (no direct integrations)."
+        },
+        {
+          "path": "frontend/src/components/DiscoveryPanel.tsx",
+          "operation": "modify",
+          "description": "Add user-friendly error handling for provider failures and no-results cases; log technical details to console only; provide actions to retry and/or switch to demo mode or manual/demo shop selection."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Ensure the user can proceed to recommendations and exports using demo/manual shop selections even when discovery fails, and that errors do not block schedule creation/export."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Add an Indore demo mode that pre-fills sample location/items and returns sample shops with distances and opening status, clearly labeled as demo data.",
+      "acceptanceCriteria": [
+        "A visible toggle/button enables demo mode and pre-fills location as Indore (or allows selecting it).",
+        "Demo mode produces at least 3 shop results with distances and opening status derived from the demo data.",
+        "App clearly labels demo data as sample data."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/DemoModeToggle.tsx",
+          "operation": "create",
+          "description": "Add a visible demo mode toggle/button that pre-fills location as Indore and can prefill sample items; persist demo mode locally for convenience and clearly label the UI as demo/sample data when enabled."
+        },
+        {
+          "path": "frontend/src/lib/demoData.ts",
+          "operation": "modify",
+          "description": "Ensure demo dataset includes at least 3 shops (including “D-Mart”) with coordinates and opening hours used to compute distance and open/closed status at the selected time."
+        },
+        {
+          "path": "frontend/src/components/DiscoveryPanel.tsx",
+          "operation": "modify",
+          "description": "Wire demo mode into discovery so that demo data is used directly when enabled and also as an automatic fallback when external providers fail/are blocked; ensure sample data is clearly labeled."
+        },
+        {
+          "path": "frontend/src/components/PlannerForm.tsx",
+          "operation": "modify",
+          "description": "When demo mode is enabled, offer a one-tap prefill for sample items and Indore location while still allowing users to edit them."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Apply a warm, India-inspired, consistent visual theme with utility-first layout optimized for one-handed mobile use.",
+      "acceptanceCriteria": [
+        "App uses a consistent theme (e.g., saffron/amber + charcoal + neutral backgrounds) across pages and components.",
+        "Primary actions are visually prominent and consistent.",
+        "Mobile layout supports quick scanning: clear hierarchy, readable text, and accessible tap targets."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Define global theme tokens (warm, India-inspired palette avoiding blue/purple) using existing Tailwind/CSS variable conventions; set typography and base spacing defaults to support mobile-first scanning and accessible tap targets."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Adjust Tailwind theme extension (if needed) to support the warm palette and consistent UI tokens used throughout the app."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Apply consistent layout structure (header with logo + language toggle + auth action, main content with sections/cards) and ensure primary actions are visually consistent across the flow."
+        },
+        {
+          "path": "frontend/src/components/AppHeader.tsx",
+          "operation": "create",
+          "description": "Create a consistent header that uses the generated logo asset and houses primary navigation elements (language toggle, login/logout), optimized for mobile one-handed use. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/public/assets/generated/logo-shopping-schedule.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated logo asset at this exact path and wire it into the header and any app metadata as needed (served as a static asset)."
+        },
+        {
+          "path": "frontend/public/assets/generated/hero-grocery-run.dim_1600x600.png",
+          "operation": "create",
+          "description": "Add the generated hero/banner asset at this exact path and wire it into the top section of the main planner screen (served as a static asset)."
+        },
+        {
+          "path": "frontend/public/assets/generated/map-pins-set.dim_256x256.png",
+          "operation": "create",
+          "description": "Add the generated map pin icon set at this exact path and use it in the map/list UI where appropriate (served as a static asset)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Add frontend-facing setup/deployment documentation covering local dfx usage, provider keys, and demo mode (IC stack only).",
+      "acceptanceCriteria": [
+        "Repository includes clear instructions to run locally with dfx (frontend + backend).",
+        "Docs explain how to enable/disable external places provider keys and how to run demo mode without keys.",
+        "Docs explicitly state that Streamlit/Heroku deployment is not applicable for this stack and provide IC deployment steps instead."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/README.md",
+          "operation": "create",
+          "description": "Document frontend setup and usage: running with dfx, how to use demo mode without keys, how to configure provider selection and optional Google Places API key in-app, and clarify Streamlit/Heroku are not applicable while providing Internet Computer deployment notes (from the frontend perspective)."
+        },
+        {
+          "path": "frontend/src/components/DiscoveryPanel.tsx",
+          "operation": "modify",
+          "description": "Add a small inline help section or linkable note describing provider options, where the optional API key is stored (local only), and how demo mode works without keys."
+        }
+      ]
+    }
+  ]
+}
